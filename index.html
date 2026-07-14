@@ -12,7 +12,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;800;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="./css/style.css?v=14">
+<link rel="stylesheet" href="./css/style.css?v=15">
 </head>
 <body>
 <div class="page-bg">
@@ -157,6 +157,18 @@
     </div>
 
     <div class="form-row">
+      <label for="contact_time">ご連絡希望時間 <em>任意</em></label>
+      <select id="contact_time" name="contact_time">
+        <option value="">指定なし</option>
+        <option value="9:00~11:00">9:00～11:00</option>
+        <option value="11:00~13:00">11:00～13:00</option>
+        <option value="13:00~15:00">13:00～15:00</option>
+        <option value="15:00~17:00">15:00～17:00</option>
+        <option value="17:00~19:00">17:00～19:00</option>
+      </select>
+    </div>
+
+    <div class="form-row">
       <label for="message">ご相談内容 <em>任意</em></label>
       <textarea id="message" name="message" rows="4" placeholder="ご質問・ご要望などをご入力ください"></textarea>
     </div>
@@ -193,6 +205,6 @@
 </div><!-- /.lp-wrapper -->
 </div><!-- /.page-bg -->
 
-<script src="./js/main.js?v=14"></script>
+<script src="./js/main.js?v=15"></script>
 </body>
 </html>

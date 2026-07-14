@@ -154,6 +154,7 @@ if (leadForm) {
       電話番号: data.tel || '',
       都道府県: data.prefecture || '',
       メールアドレス: data.email || '',
+      連絡希望時間: data.contact_time || '指定なし',
       ご相談内容: data.message || '',
       流入元: [data.utm_source, data.utm_campaign, data.utm_content].filter(Boolean).join(' / ') || '直接',
       配信面: data.placement || ''
