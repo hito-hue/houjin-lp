@@ -61,7 +61,6 @@ const PREFECTURE_BY_ROMAJI = {
 
 (function autofillPrefecture() {
   const select = document.getElementById('prefecture');
-  const notice = document.getElementById('prefectureAuto');
   if (!select) return;
 
   fetch('https://ipwho.is/')
@@ -80,7 +79,6 @@ const PREFECTURE_BY_ROMAJI = {
       if (!pref || select.value) return;
 
       select.value = pref;
-      if (notice) notice.hidden = false;
     })
     .catch(function () {
       /* 判定できなくても、お客様が手で選べば済むので何もしない */
