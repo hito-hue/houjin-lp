@@ -3,11 +3,9 @@
    送信先の変更はこの CONFIG だけ書き換えればOK
    ========================================================================== */
 const CONFIG = {
-  // 【送信先1】メール（FormSubmit経由。登録不要・無料）
-  mailEndpoint: 'https://formsubmit.co/ajax/h_ito@beee-marketing.com',
-
-  // 【送信先2】ChatWork通知（VPSの受付窓口。空ならメールのみ）
-  chatworkEndpoint: '',
+  // 問い合わせの送信先（VPSの中継窓口）
+  // ここが受け取り、①担当者へメール通知 ②お客様へ自動返信 ③ChatWork通知 を行う
+  endpoint: 'https://x85-131-252-8.static.xvps.ne.jp/lead/',
 
   // 送信完了後に飛ばすページ
   thanksUrl: './thanks.html'
@@ -251,98 +249,31 @@ function openConfirm(data) {
   document.body.style.overflow = 'hidden';
 }
 
-/* お客様へ自動で返信するメールの文面 */
-function buildAutoResponse(data) {
-  const name = data.name ? data.name + ' 様' : 'お客様';
-
-  return [
-    name,
-    '',
-    'この度は、法人携帯・通信費の見直しに関する広告をご覧いただき、',
-    'お問い合わせいただきありがとうございます。',
-    '株式会社アイ・ステーションです。',
-    '',
-    '本サービスでは、現在の携帯・通信環境を確認したうえで、',
-    '月々のコスト削減や、法人携帯の管理面の見直しをご提案しています。',
-    '',
-    '後ほど担当者より、ご入力いただいたお電話番号宛にご連絡させていただきます。',
-    'お電話では、現在のご利用状況を簡単にお伺いし、',
-    '削減可能性や見直しのポイントをご案内いたします。',
-    '',
-    'お忙しいところ恐れ入りますが、',
-    '担当者からの着信をお待ちいただけますと幸いです。',
-    '',
-    '（ご連絡は、知らない番号からの着信となる場合がございます。',
-    '　本件に関するご連絡ですので、お受けいただけますようお願いいたします）',
-    '',
-    '━━━━━━━━━━━━━━━━━━━━',
-    '株式会社アイ・ステーション',
-    '法人携帯・通信費見直し窓口',
-    '受付時間：平日 9:00〜19:00',
-    'https://i-sta.co.jp/',
-    '━━━━━━━━━━━━━━━━━━━━'
-  ].join('\n');
-}
-
-/* 実際の送信処理 */
+/* 実際の送信処理（VPSの中継窓口へ送る） */
 function sendLead(data) {
   confirmSendBtn.disabled = true;
   confirmSendBtn.textContent = '送信中…';
   submitBtn.disabled = true;
 
-  // メール本文で読みやすいように、日本語の項目名に整える
-  const mailBody = {
-      _subject: '【LP】無料相談：' + (data.company_name || '') + ' 様',
-      _template: 'table',
-
-      // お客様への自動返信（この email 宛に、下記の文面が自動で届く）
-      email: data.email || '',
-      _autoresponse: buildAutoResponse(data),
-      会社形態: data.company_type || '',
-      会社名・屋号: data.company_name || '',
-      お名前: data.name || '',
-      電話番号: data.tel || '',
-      都道府県: data.prefecture || '',
-      メールアドレス: data.email || '',
-      連絡希望時間: data.contact_time || '指定なし',
-      ご相談内容: data.message || '',
-      流入元: [data.utm_source, data.utm_campaign, data.utm_content].filter(Boolean).join(' / ') || '直接',
-      配信面: data.placement || ''
-    };
-
-    const sendMail = fetch(CONFIG.mailEndpoint, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-      body: JSON.stringify(mailBody)
-    }).then(function (res) {
-      if (!res.ok) throw new Error('mail failed');
-      return 'mail';
-    });
-
-    const sendChatwork = CONFIG.chatworkEndpoint
-      ? fetch(CONFIG.chatworkEndpoint, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(data)
-        }).then(function (res) {
-          if (!res.ok) throw new Error('chatwork failed');
-          return 'chatwork';
-        })
-      : Promise.reject(new Error('chatwork未設定'));
-
-    // どちらか1つでも成功すれば、お客様には「送信完了」を出す
-    Promise.allSettled([sendMail, sendChatwork]).then(function (results) {
-      const ok = results.some(function (r) { return r.status === 'fulfilled'; });
-      if (ok) {
-        window.location.href = CONFIG.thanksUrl;
-      } else {
-        closeConfirm();
-        confirmSendBtn.disabled = false;
-        confirmSendBtn.textContent = 'この内容で送信';
-        submitBtn.disabled = false;
-        submitBtn.textContent = '無料相談する';
-        alert('送信に失敗しました。お手数ですが、時間をおいて再度お試しください。');
-      }
+  fetch(CONFIG.endpoint, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+  })
+    .then(function (res) {
+      if (!res.ok) throw new Error('送信に失敗しました');
+      return res.json();
+    })
+    .then(function () {
+      window.location.href = CONFIG.thanksUrl;
+    })
+    .catch(function () {
+      closeConfirm();
+      confirmSendBtn.disabled = false;
+      confirmSendBtn.textContent = 'この内容で送信';
+      submitBtn.disabled = false;
+      submitBtn.textContent = '無料相談する';
+      alert('送信に失敗しました。お手数ですが、時間をおいて再度お試しください。');
     });
 }
 
