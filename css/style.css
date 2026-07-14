@@ -1,0 +1,1368 @@
+/* ==========================================================================
+   法人携帯LP - style.css
+   ========================================================================== */
+
+:root {
+  /* 広告クリエイティブに合わせたロイヤルブルー基調 */
+  --navy: #2f34c9;
+  --navy-deep: #1f238f;
+  --blue-bright: #2f8fe0;
+  --red: #d81324;
+  --red-bright: #f0263a;
+  --gold-light: #f3dc95;
+  --gold: #e3b64a;
+  --gold-base: #d9a83a;
+  --gold-deep: #b98d28;
+  --white: #ffffff;
+  --bg-page: #1f238f;
+  --text-gray: #5c6480;
+  --border-gray: #d2d7e6;
+  --notice-bg: #fff6e3;
+  --notice-border: #e3b64a;
+}
+
+/* ---------- Reset ---------- */
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+
+body {
+  font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
+  font-weight: 500;
+  color: var(--navy);
+  background: var(--bg-page);
+  line-height: 1.6;
+  -webkit-text-size-adjust: 100%;
+  overflow-x: hidden;
+}
+
+img { max-width: 100%; height: auto; display: block; }
+a { color: inherit; text-decoration: none; }
+button { font-family: inherit; cursor: pointer; }
+h1, h2, h3 { margin: 0; font-weight: 800; }
+p { margin: 0; }
+html { scroll-behavior: smooth; }
+
+/* ---------- Page Container ---------- */
+.page-bg {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  background: var(--bg-page);
+}
+
+.lp-wrapper {
+  width: 100%;
+  max-width: 430px;
+  margin: 0 auto;
+  overflow: hidden;
+  position: relative;
+  /* 広告画像と同じ、青→水色に流れる背景 */
+  background:
+    radial-gradient(120% 70% at 90% 8%, rgba(90, 175, 255, 0.30) 0%, rgba(90, 175, 255, 0) 55%),
+    radial-gradient(100% 60% at 0% 55%, rgba(47, 143, 224, 0.28) 0%, rgba(47, 143, 224, 0) 60%),
+    linear-gradient(170deg, #3a3fd6 0%, #2f34c9 32%, #2b53c5 62%, #2f8fe0 100%);
+}
+
+/* ==========================================================================
+   ブランドロゴ（テキスト版・差し替え可）
+   ========================================================================== */
+.brand-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--navy);
+}
+
+.brand-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  color: var(--navy);
+  flex-shrink: 0;
+}
+.brand-mark svg { width: 22px; height: 22px; }
+
+.brand-text {
+  display: inline-flex;
+  align-items: baseline;
+  line-height: 1;
+  letter-spacing: 0.01em;
+}
+.brand-text-main { font-size: 18px; font-weight: 900; }
+.brand-text-sub { font-size: 13px; font-weight: 800; }
+
+/* ==========================================================================
+   Header
+   ========================================================================== */
+.header {
+  height: 56px;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 10px;
+  position: relative;
+  z-index: 10;
+}
+
+.header-logo-link { display: block; line-height: 0; }
+
+.header-actions {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.header-action {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  height: 40px;
+  padding: 0 12px;
+  border-radius: 999px;
+  border: 1.5px solid var(--navy);
+  background: #fff;
+  color: var(--navy);
+  font-family: inherit;
+  text-decoration: none;
+  transition: background 0.15s ease, color 0.15s ease, transform 0.1s ease;
+  cursor: pointer;
+}
+
+.header-action:hover { background: #eef0fc; }
+.header-action:active { transform: translateY(1px); }
+
+/* 見積もりボタンだけ塗りつぶし＋下線アクセント */
+.header-form-action {
+  position: relative;
+  background: var(--navy);
+  border-color: var(--navy);
+  color: #fff;
+  padding-bottom: 3px;
+  border-bottom: 4px solid var(--gold);
+}
+.header-form-action:hover { background: #4348d6; }
+
+@media (prefers-reduced-motion: reduce) {
+  .cta-link, .submit-btn, .header-form-action, .notice-bar-track { animation: none !important; }
+}
+
+.header-action-icon { width: 16px; height: 16px; flex-shrink: 0; }
+
+.header-action-label {
+  font-size: 10.5px;
+  font-weight: 800;
+  line-height: 1.15;
+  text-align: center;
+  letter-spacing: 0.02em;
+}
+
+.header-action-sub {
+  display: block;
+  font-size: 8.5px;
+  font-weight: 700;
+  color: var(--gold-light);
+  margin-bottom: 1px;
+  letter-spacing: 0;
+}
+
+/* ==========================================================================
+   赤帯マーキー
+   ========================================================================== */
+.notice-bar {
+  width: 100%;
+  background: var(--gold);
+  color: var(--navy);
+  overflow: hidden;
+  position: relative;
+  white-space: nowrap;
+  border-bottom: 1px solid rgba(47, 52, 201, 0.18);
+}
+
+.notice-bar-track {
+  display: inline-flex;
+  align-items: center;
+  animation: notice-scroll 8s linear infinite;
+  will-change: transform;
+}
+.notice-bar:hover .notice-bar-track { animation-play-state: paused; }
+
+.notice-bar-text {
+  display: inline-block;
+  padding: 8px 30px 8px 0;
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  line-height: 1.5;
+}
+
+@keyframes notice-scroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-33.333%); }
+}
+
+/* ==========================================================================
+   FV
+   ========================================================================== */
+.fv {
+  position: relative;
+  width: 100%;
+  background: var(--navy);
+  line-height: 0;
+}
+
+.fv-img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* 画像と同じ斜めの金ラインを下辺に続ける */
+.fv::after {
+  content: "";
+  position: absolute;
+  left: -6%;
+  right: -6%;
+  bottom: -5px;
+  height: 10px;
+  background: linear-gradient(90deg, var(--gold-deep), var(--gold-light) 45%, var(--gold));
+  transform: rotate(-1.6deg);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
+}
+
+/* 特典バナー（FV画像の直下） */
+.monthly-banner {
+  position: relative;
+  width: 100%;
+  padding: 14px 14px 0;
+}
+
+.monthly-banner-inner {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px 13px;
+  border-radius: 14px;
+  background: #fff;
+  border: 3px solid #fff;
+  box-shadow: 0 8px 22px rgba(10, 20, 90, 0.35);
+}
+
+/* 「月額料金」は左肩に貼るラベル */
+.monthly-label {
+  position: absolute;
+  top: -10px;
+  left: 14px;
+  font-size: 11px;
+  font-weight: 800;
+  color: #fff;
+  background: var(--navy);
+  border-radius: 999px;
+  padding: 3px 12px 4px;
+  letter-spacing: 0.06em;
+}
+
+.monthly-body {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  line-height: 1;
+  padding-right: 12px;
+  border-right: 1px dashed #d2d7e6;
+}
+
+.monthly-price {
+  display: inline-flex;
+  align-items: baseline;
+  color: var(--navy);
+}
+.monthly-num {
+  font-size: 42px;
+  font-weight: 900;
+  letter-spacing: -0.01em;
+  line-height: 1;
+  font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+}
+.monthly-yen { font-size: 19px; font-weight: 900; margin-left: 1px; }
+.monthly-tilde { font-size: 17px; font-weight: 900; margin-left: 1px; color: var(--text-gray); }
+
+.monthly-tax {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-gray);
+  margin-top: 6px;
+  letter-spacing: 0.01em;
+}
+
+.monthly-note {
+  flex: 1;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-gray);
+  line-height: 1.4;
+  text-align: center;
+}
+.monthly-note strong {
+  display: block;
+  font-size: 16px;
+  font-weight: 900;
+  color: var(--red);
+  line-height: 1.3;
+  margin-top: 1px;
+}
+
+/* メインCTA（赤の角丸ボタン＋金の矢印チップ） */
+.cta-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin: 22px 14px 20px;
+  padding: 12px 12px 12px 18px;
+  border-radius: 14px;
+  background: linear-gradient(180deg, var(--red-bright), var(--red));
+  color: #fff;
+  border: 3px solid #fff;
+  box-shadow: 0 10px 24px rgba(10, 20, 90, 0.4);
+  transition: filter 0.15s ease, transform 0.1s ease, box-shadow 0.15s ease;
+  animation: ctaHeartbeat 2.4s ease-in-out infinite;
+}
+.cta-link:hover { filter: brightness(1.06); animation-play-state: paused; }
+.cta-link:active { transform: translateY(2px); box-shadow: 0 4px 12px rgba(216, 19, 36, 0.35); }
+
+@keyframes ctaHeartbeat {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.02); }
+}
+
+.cta-body {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+}
+
+.cta-sub {
+  font-size: 10.5px;
+  font-weight: 700;
+  color: var(--gold-light);
+  letter-spacing: 0.02em;
+}
+
+.cta-main {
+  font-size: 19px;
+  font-weight: 900;
+  letter-spacing: 0.01em;
+  color: #fff;
+  line-height: 1.2;
+}
+
+/* 矢印は金色の四角チップに */
+.cta-arrow {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  background: var(--gold);
+  color: var(--navy);
+}
+.cta-arrow svg { width: 20px; height: 20px; }
+
+/* ==========================================================================
+   電話CTA
+   ========================================================================== */
+.phone-cta-wrap {
+  background: var(--navy);
+  padding: 4px 14px 16px;
+  text-align: center;
+}
+
+.phone-cta-lead {
+  font-size: 12px;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: 0.04em;
+  margin: 0 0 6px;
+}
+
+.phone-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background: transparent;
+  border: 1.5px solid rgba(255, 255, 255, 0.5);
+  border-radius: 12px;
+  padding: 10px 22px 11px;
+  color: #fff;
+  transition: background 0.15s ease, transform 0.1s ease;
+}
+.phone-cta:hover { background: rgba(255, 255, 255, 0.08); }
+.phone-cta:active { transform: translateY(1px); }
+
+.phone-cta-icon {
+  width: 30px;
+  height: 30px;
+  flex-shrink: 0;
+  padding: 6px;
+  border-radius: 50%;
+  background: var(--gold);
+  color: var(--navy);
+  box-sizing: content-box;
+}
+
+.phone-cta-body {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.phone-cta-numtext {
+  font-size: 26px;
+  font-weight: 900;
+  letter-spacing: 0.02em;
+  line-height: 1.1;
+  color: #fff;
+  font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+}
+
+.phone-cta-sub {
+  font-size: 10.5px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.75);
+  letter-spacing: 0.02em;
+}
+
+/* ==========================================================================
+   選ばれるポイント
+   ========================================================================== */
+.benefits {
+  background: var(--navy);
+  padding: 0 12px 18px;
+}
+
+.benefit-title {
+  color: #fff;
+  font-size: 19px;
+  font-weight: 900;
+  text-align: center;
+  line-height: 1;
+  margin: 10px 0 16px;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+.benefit-title span {
+  display: inline-block;
+  padding-bottom: 8px;
+  border-bottom: 3px solid var(--gold);
+}
+
+.benefit-main-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.benefit-sub-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 6px;
+}
+
+.benefit-card {
+  background: #ffffff;
+  border: 1px solid rgba(47, 52, 201, 0.18);
+  border-radius: 12px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+/* 大カードは上辺に金のラインを入れて差をつける */
+.benefit-card.large {
+  height: 92px;
+  padding: 8px 3px 6px;
+  border-top: 3px solid var(--gold);
+}
+.benefit-card.small { height: 70px; padding: 6px 2px 4px; }
+
+.benefit-icon-large {
+  display: block;
+  height: 34px;
+  margin: 0 auto 3px;
+}
+.benefit-icon-large svg { height: 34px; width: auto; display: block; }
+
+.benefit-icon-small {
+  display: block;
+  height: 24px;
+  margin: 0 auto 2px;
+}
+.benefit-icon-small svg { height: 24px; width: auto; display: block; }
+
+.zero-yen {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  line-height: 1;
+  margin-top: 2px;
+  color: var(--red);
+}
+.zero-yen-num {
+  font-size: 50px;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+}
+.zero-yen-unit { font-size: 22px; font-weight: 900; margin-left: 1px; }
+
+.benefit-small-text {
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--navy);
+  line-height: 1.2;
+}
+
+.benefit-red {
+  font-size: 22px;
+  font-weight: 900;
+  color: var(--red);
+  line-height: 1.15;
+}
+
+.benefit-sub-title {
+  font-size: 9px;
+  font-weight: 800;
+  color: var(--navy);
+  line-height: 1.25;
+}
+
+.benefit-sub-red {
+  color: var(--red);
+  font-size: 11px;
+  font-weight: 900;
+  line-height: 1.2;
+}
+
+/* ==========================================================================
+   Form
+   ========================================================================== */
+.form-pre-card {
+  position: relative;
+  z-index: 2;
+  width: 84%;
+  max-width: 340px;
+  margin: 0 auto -13px;
+  padding: 8px 16px;
+  background: linear-gradient(180deg, #ffffff 0%, #fdfbf3 100%);
+  border: 1px solid rgba(217, 164, 65, 0.5);
+  border-radius: 9px;
+  box-shadow: 0 3px 8px rgba(47, 52, 201, 0.08);
+  text-align: center;
+}
+.form-pre-card-text {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--navy);
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+}
+.form-pre-card-text em {
+  font-style: normal;
+  color: #a87c28;
+  font-weight: 800;
+}
+
+.form-pre-card + .biz-form { padding-top: 38px; }
+
+.biz-form-wrap {
+  padding: 22px 14px 26px;
+  background: transparent;
+}
+
+.biz-form {
+  background: #fff;
+  border-radius: 16px;
+  padding: 22px 16px 20px;
+  border: 3px solid #fff;
+  box-shadow: 0 10px 28px rgba(10, 20, 90, 0.35);
+}
+
+.biz-form h2 {
+  margin: 0;
+  text-align: center;
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--navy);
+}
+
+.form-lead {
+  text-align: center;
+  color: var(--text-gray);
+  margin: 6px 0 18px;
+  font-size: 13px;
+}
+
+.form-row { margin-bottom: 14px; }
+
+.form-row label {
+  display: block;
+  font-weight: 700;
+  font-size: 14px;
+  margin-bottom: 6px;
+  color: var(--navy);
+}
+
+.form-row label span,
+.form-row label em {
+  display: inline-block;
+  color: #fff;
+  font-size: 10px;
+  font-style: normal;
+  padding: 2px 8px;
+  border-radius: 999px;
+  margin-left: 6px;
+  vertical-align: middle;
+  line-height: 1.4;
+  font-weight: 700;
+}
+
+.form-row label span { background: var(--red); }
+.form-row label em { background: #8a998f; }
+
+.form-row input,
+.form-row select,
+.form-row textarea {
+  width: 100%;
+  border: 1.5px solid transparent;
+  border-radius: 10px;
+  padding: 12px 12px;
+  font-size: 16px;
+  font-family: inherit;
+  background: #f1f3fa;
+  outline: none;
+  color: var(--navy);
+  transition: border-color 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
+}
+
+.form-row input:focus,
+.form-row select:focus,
+.form-row textarea:focus {
+  border-color: #2f34c9;
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(47, 52, 201, 0.12);
+}
+
+.form-row textarea { resize: vertical; min-height: 96px; }
+
+/* 書類確認エリア */
+.document-check {
+  background: var(--notice-bg);
+  border: 2px solid var(--notice-border);
+  border-radius: 10px;
+  padding: 14px 16px;
+  margin: 0 0 14px;
+  color: #2d2d2d;
+}
+
+.document-check-header strong {
+  display: block;
+  font-size: 14px;
+  color: var(--navy);
+  margin-bottom: 6px;
+}
+
+.document-check p { margin: 4px 0; font-size: 12.5px; line-height: 1.7; }
+
+.document-list { margin: 6px 0; padding-left: 18px; }
+.document-list li {
+  font-size: 12.5px;
+  line-height: 1.7;
+  font-weight: 700;
+  color: var(--navy);
+}
+
+.document-check-question {
+  margin: 10px 0 6px;
+  font-weight: 700;
+  font-size: 12.5px;
+  color: var(--navy);
+}
+
+.document-check-options {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.document-check-radio {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 8px 10px;
+  background: #fff;
+  border: 1.5px solid var(--border-gray);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  font-size: 12.5px;
+  line-height: 1.6;
+}
+.document-check-radio:hover { border-color: var(--notice-border); background: #fbf8ec; }
+
+.document-check-radio input[type="radio"] {
+  margin-top: 3px;
+  cursor: pointer;
+  accent-color: var(--red);
+  flex-shrink: 0;
+}
+.document-check-radio input[type="radio"]:checked + span { font-weight: 700; color: var(--navy); }
+.document-check-radio:has(input[type="radio"]:checked) { border-color: var(--red); background: #f2f8f4; }
+
+.document-check-deny {
+  margin-top: 10px;
+  padding: 10px 12px;
+  background: #fdf3f1;
+  border: 1.5px dashed var(--red);
+  border-radius: 8px;
+  color: var(--red);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.7;
+}
+
+.submit-btn {
+  width: 100%;
+  border: none;
+  border-radius: 12px;
+  background: var(--navy);
+  color: #fff;
+  font-size: 17px;
+  font-weight: 900;
+  letter-spacing: 0.02em;
+  padding: 16px;
+  margin-top: 10px;
+  border-bottom: 4px solid var(--gold);
+  box-shadow: 0 8px 18px rgba(31, 35, 143, 0.28);
+  transition: background 0.15s ease, transform 0.1s ease;
+}
+.submit-btn:hover { background: #4348d6; }
+.submit-btn:active { transform: translateY(2px); }
+.submit-btn:disabled {
+  background: #b9bfd4;
+  border-bottom-color: #9aa2bd;
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+.privacy-consent {
+  text-align: center;
+  font-size: 10.5px;
+  color: var(--text-gray);
+  margin: 10px 0 0;
+  line-height: 1.4;
+  white-space: nowrap;
+}
+.privacy-consent a { color: var(--navy); text-decoration: underline; font-weight: 700; }
+
+.bottom-note {
+  text-align: center;
+  font-size: 11px;
+  color: var(--text-gray);
+  margin: 6px 0 0;
+}
+
+/* ボット対策の罠フィールド（画面にも読み上げにも出さない） */
+.hp-field {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+/* フォームエラー */
+.form-error {
+  display: none;
+  margin: 6px 0 0;
+  padding: 6px 10px;
+  background: #fdf3f1;
+  border-left: 3px solid var(--red);
+  color: var(--red);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.5;
+  border-radius: 4px;
+}
+.form-error.show { display: block; }
+
+.form-row input.error,
+.form-row select.error,
+.form-row textarea.error {
+  border-color: var(--red);
+  box-shadow: 0 0 0 3px rgba(200, 69, 47, 0.1);
+}
+
+/* ==========================================================================
+   運営会社
+   ========================================================================== */
+.company {
+  background: var(--navy);
+  padding: 4px 14px 26px;
+}
+
+.company-table {
+  margin: 0;
+  padding: 6px 14px 10px;
+  background: #fff;
+  border-radius: 14px;
+  border: 1px solid #dde1f0;
+}
+
+.company-table dt {
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--navy);
+  margin-top: 10px;
+  letter-spacing: 0.02em;
+}
+
+.company-table dd {
+  margin: 3px 0 0;
+  padding-bottom: 10px;
+  border-bottom: 1px dashed #e3e7f2;
+  font-size: 13px;
+  font-weight: 600;
+  color: #333b52;
+  line-height: 1.6;
+}
+.company-table dd:last-child { border-bottom: none; padding-bottom: 4px; }
+
+.company-link {
+  display: block;
+  margin-top: 12px;
+  text-align: center;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #fff;
+  text-decoration: underline;
+}
+
+/* ==========================================================================
+   下層ページ（会社概要・特商法・プライバシー）
+   ========================================================================== */
+.subpage {
+  padding: 26px 14px 30px;
+}
+
+.subpage-title {
+  text-align: center;
+  color: #fff;
+  font-size: 22px;
+  font-weight: 900;
+  line-height: 1.3;
+  margin: 0 0 18px;
+}
+.subpage-title span {
+  display: block;
+  margin-top: 4px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  color: var(--gold);
+}
+
+.subpage-card {
+  background: #fff;
+  border: 3px solid #fff;
+  border-radius: 16px;
+  padding: 20px 16px 18px;
+  box-shadow: 0 10px 28px rgba(10, 20, 90, 0.35);
+}
+
+.subpage-lead {
+  font-size: 13px;
+  line-height: 1.85;
+  color: #333b52;
+  margin: 0 0 16px;
+}
+.subpage-lead strong { color: var(--navy); font-weight: 800; }
+
+.subpage-table { margin: 0; }
+
+.subpage-table dt {
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--navy);
+  letter-spacing: 0.02em;
+  margin-top: 14px;
+}
+.subpage-table dt:first-child { margin-top: 0; }
+
+.subpage-table dd {
+  margin: 4px 0 0;
+  padding-bottom: 12px;
+  border-bottom: 1px dashed #e3e7f2;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #333b52;
+  line-height: 1.7;
+}
+.subpage-table dd:last-of-type { border-bottom: none; }
+
+.subpage-h2 {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--navy);
+  margin: 18px 0 6px;
+  padding-left: 9px;
+  border-left: 3px solid var(--gold);
+}
+
+.subpage-text {
+  font-size: 13px;
+  line-height: 1.85;
+  color: #333b52;
+  margin: 0 0 6px;
+}
+
+.subpage-list {
+  margin: 4px 0 0;
+  padding-left: 20px;
+}
+.subpage-list li {
+  font-size: 13px;
+  line-height: 1.85;
+  color: #333b52;
+}
+
+/* 未確定項目は目立たせる（そのまま公開しないように） */
+.todo {
+  color: #b8471f;
+  font-weight: 700;
+  background: #fff6e3;
+  border-radius: 4px;
+  padding: 2px 6px;
+  display: inline-block;
+}
+
+.subpage-note {
+  margin: 16px 0 0;
+  padding: 10px 12px;
+  background: #f4f6fc;
+  border-radius: 8px;
+  font-size: 11.5px;
+  line-height: 1.7;
+  color: var(--text-gray);
+}
+
+/* 下層ページからもフォームへ戻せるCTA */
+.subpage-cta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  margin: 18px 0 0;
+  padding: 13px 16px;
+  border-radius: 14px;
+  background: linear-gradient(180deg, var(--red-bright), var(--red));
+  border: 3px solid #fff;
+  color: #fff;
+  box-shadow: 0 10px 24px rgba(10, 20, 90, 0.4);
+}
+.subpage-cta:hover { filter: brightness(1.06); }
+
+.subpage-cta-sub {
+  font-size: 10.5px;
+  font-weight: 700;
+  color: var(--gold-light);
+}
+.subpage-cta-main {
+  font-size: 18px;
+  font-weight: 900;
+  letter-spacing: 0.01em;
+}
+
+.subpage-back {
+  display: block;
+  width: 100%;
+  margin: 14px 0 0;
+  padding: 12px;
+  border: 1.5px solid rgba(255, 255, 255, 0.5);
+  border-radius: 12px;
+  background: transparent;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+}
+.subpage-back:hover { background: rgba(255, 255, 255, 0.1); }
+
+/* ==========================================================================
+   Footer
+   ========================================================================== */
+.site-footer {
+  background: rgba(16, 20, 90, 0.55);
+  color: #fff;
+  padding: 24px 14px;
+  text-align: center;
+  border-top: 3px solid var(--gold);
+}
+
+.footer-brand { color: #fff; margin: 0 auto 12px; }
+.footer-brand .brand-mark { color: #fff; }
+
+.footer-nav {
+  margin-bottom: 12px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px 14px;
+}
+.footer-nav a {
+  color: #fff;
+  font-size: 12px;
+  text-decoration: underline;
+  white-space: nowrap;
+}
+
+.footer-company {
+  font-size: 12.5px;
+  font-weight: 700;
+  margin: 0 0 10px;
+  letter-spacing: 0.02em;
+}
+.footer-company a {
+  color: #fff;
+  text-decoration: underline;
+  font-weight: 800;
+}
+
+.footer-copy { font-size: 11px; opacity: 0.7; }
+
+/* ==========================================================================
+   Modal
+   ========================================================================== */
+.modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.modal[hidden] { display: none; }
+
+.modal-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(31, 35, 143, 0.6);
+}
+
+.modal-card {
+  position: relative;
+  background: #fff;
+  border-radius: 14px;
+  padding: 22px 18px 18px;
+  max-width: 380px;
+  width: 100%;
+  max-height: 85vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(31, 35, 143, 0.35);
+}
+
+.modal-card h3 {
+  margin: 0 0 6px;
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--navy);
+  text-align: center;
+}
+
+.modal-close-x {
+  position: absolute;
+  top: 8px;
+  right: 12px;
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: transparent;
+  font-size: 24px;
+  color: var(--text-gray);
+  line-height: 1;
+  padding: 0;
+}
+.modal-close-x:hover { color: var(--navy); }
+
+/* 電話モーダル */
+.modal-card-tel { text-align: center; padding: 28px 22px 22px; }
+
+.tel-modal-lead {
+  text-align: center;
+  font-size: 13px;
+  color: var(--text-gray);
+  margin: 4px 0 18px;
+  font-weight: 700;
+}
+
+.tel-modal-cta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: linear-gradient(135deg, var(--red), var(--red-bright));
+  color: #fff !important;
+  padding: 16px 18px;
+  border-radius: 12px;
+  margin-bottom: 12px;
+  box-shadow: 0 6px 16px rgba(200, 69, 47, 0.32);
+  transition: filter 0.15s ease, transform 0.1s ease;
+}
+.tel-modal-cta:hover { filter: brightness(1.06); }
+.tel-modal-cta:active { transform: translateY(1px); }
+.tel-modal-cta svg { width: 26px; height: 26px; flex-shrink: 0; }
+
+.tel-modal-num {
+  font-size: 24px;
+  font-weight: 900;
+  letter-spacing: 0.02em;
+  font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+}
+
+.tel-modal-hours {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--navy);
+  margin: 0;
+}
+
+/* 受付時間外モーダル */
+.modal-card-afterhours { text-align: center; padding: 30px 22px 22px; }
+
+.afterhours-icon {
+  width: 60px;
+  height: 60px;
+  margin: 0 auto 14px;
+  border-radius: 50%;
+  background: var(--notice-bg);
+  border: 2px solid var(--notice-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--gold-deep);
+}
+.afterhours-icon svg { width: 32px; height: 32px; }
+
+.modal-card-afterhours h3 {
+  font-size: 18px;
+  font-weight: 900;
+  color: var(--navy);
+  margin: 0 0 8px;
+}
+
+.afterhours-hours {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--red);
+  background: #fdf3f1;
+  border-radius: 999px;
+  padding: 4px 14px;
+  margin: 0 0 14px;
+}
+
+.afterhours-text {
+  font-size: 13px;
+  line-height: 1.8;
+  color: var(--text-gray);
+  margin: 0 0 18px;
+}
+.afterhours-text strong { color: var(--navy); font-weight: 900; }
+
+.afterhours-form-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+  background: linear-gradient(90deg, var(--red), var(--red-bright));
+  color: #fff;
+  border-radius: 999px;
+  padding: 12px 18px;
+  margin: 0 0 10px;
+  box-shadow: 0 8px 18px rgba(200, 69, 47, 0.32);
+  transition: filter 0.15s ease, transform 0.1s ease;
+}
+.afterhours-form-btn:hover { filter: brightness(1.05); }
+.afterhours-form-btn:active { transform: translateY(1px); }
+
+.afterhours-form-sub {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--gold-light);
+  letter-spacing: 0.02em;
+}
+.afterhours-form-main {
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+
+.afterhours-close-btn {
+  border: none;
+  background: transparent;
+  color: var(--text-gray);
+  font-size: 13px;
+  font-weight: 700;
+  padding: 6px 12px;
+  text-decoration: underline;
+}
+.afterhours-close-btn:hover { color: var(--navy); }
+
+/* ==========================================================================
+   Thanks
+   ========================================================================== */
+.thanks {
+  padding: 40px 18px 44px;
+  text-align: center;
+  background: #fff;
+}
+
+.thanks-check { width: 76px; height: 76px; margin: 0 auto 18px; }
+.thanks-check svg { width: 100%; height: 100%; }
+
+.thanks-title {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--navy);
+  margin: 0 0 14px;
+  line-height: 1.4;
+}
+
+.thanks-text {
+  font-size: 14px;
+  line-height: 1.85;
+  color: var(--text-gray);
+  margin: 0 0 22px;
+}
+.thanks-text strong { color: var(--navy); font-weight: 800; }
+
+.thanks-tel-box {
+  background: #f4f8f5;
+  border-radius: 12px;
+  padding: 16px 14px 14px;
+  margin: 0 0 22px;
+}
+.thanks-tel-lead {
+  font-size: 13px;
+  color: var(--text-gray);
+  margin: 0 0 6px;
+  font-weight: 700;
+}
+.thanks-tel-num {
+  display: inline-block;
+  font-size: 26px;
+  font-weight: 900;
+  color: var(--navy);
+  letter-spacing: 0.02em;
+  margin: 0 0 4px;
+  font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+}
+.thanks-tel-hours { font-size: 12px; color: var(--text-gray); margin: 0; }
+
+.thanks-back-btn {
+  display: inline-block;
+  background: var(--navy);
+  color: #fff;
+  padding: 12px 32px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 800;
+  box-shadow: 0 6px 14px rgba(31, 35, 143, 0.22);
+}
+
+/* ==========================================================================
+   Responsive 360px以下
+   ========================================================================== */
+@media (max-width: 360px) {
+  .header { height: 50px; padding: 0 8px; }
+  .brand-text-main { font-size: 16px; }
+  .brand-text-sub { font-size: 11px; }
+  .header-actions { gap: 4px; }
+  .header-action { height: 38px; padding: 0 7px; gap: 4px; }
+  .header-action-icon { width: 14px; height: 14px; }
+  .header-action-label { font-size: 9.5px; }
+  .header-action-sub { font-size: 8px; }
+
+  .fv { height: 417px; }
+  .fv-bg { height: 316px; }
+  .fv-phone { top: 6px; right: -6px; width: 168px; }
+  .phone-frame { width: 132px; height: 268px; border-radius: 26px; }
+  .phone-screen { border-radius: 21px; }
+  .phone-island { width: 52px; height: 15px; }
+  .phone-lens { width: 17px; height: 17px; }
+
+  .fv-text { top: 24px; left: 10px; width: 216px; padding-left: 10px; }
+  .fv-badge { font-size: 12px; padding: 3px 10px 4px; margin-bottom: 8px; }
+  .fv-model { font-size: 30px; margin-bottom: 9px; }
+  .fv-model-num { font-size: 32px; }
+  .fv-price-lead { font-size: 16px; }
+  .fv-price-num { font-size: 76px; }
+  .fv-price-yen { font-size: 34px; }
+  .fv-price-tilde { font-size: 27px; }
+  .fv-brush { width: 146px; height: 28px; }
+  .fv-desk { height: 78px; }
+
+  .monthly-banner { top: 271px; }
+  .monthly-num { font-size: 36px; }
+  .monthly-yen { font-size: 17px; }
+  .monthly-label { font-size: 10px; }
+  .monthly-tax { font-size: 11px; }
+  .monthly-note { font-size: 11px; }
+  .monthly-note strong { font-size: 14px; }
+
+  .cta-link { top: 351px; padding: 9px 9px 9px 14px; }
+  .cta-sub { font-size: 9.5px; }
+  .cta-main { font-size: 17px; }
+  .cta-arrow { width: 38px; height: 38px; }
+
+  .phone-cta-numtext { font-size: 25px; }
+  .phone-cta-icon { width: 23px; height: 23px; }
+
+  .benefits { padding: 0 10px 16px; }
+  .benefit-title { font-size: 17px; margin: 6px 0 12px; letter-spacing: 0.02em; }
+  .benefit-title::before, .benefit-title::after { width: 30px; margin: 0 6px; }
+  .benefit-main-grid { gap: 7px; margin-bottom: 7px; }
+  .benefit-sub-grid { gap: 5px; }
+  .benefit-card.large { height: 76px; padding: 5px 3px 4px; }
+  .benefit-card.small { height: 60px; padding: 4px 2px 3px; }
+  .benefit-icon-large, .benefit-icon-large svg { height: 28px; }
+  .benefit-icon-small, .benefit-icon-small svg { height: 22px; }
+  .zero-yen-num { font-size: 42px; }
+  .zero-yen-unit { font-size: 19px; }
+  .benefit-small-text { font-size: 10px; }
+  .benefit-red { font-size: 19px; }
+  .benefit-sub-title { font-size: 8.5px; }
+  .benefit-sub-red { font-size: 10px; }
+
+  .privacy-consent { font-size: 9.5px; }
+}
+
+/* PC幅 */
+@media (min-width: 431px) {
+  .lp-wrapper { box-shadow: 0 0 40px rgba(0, 0, 0, 0.3); }
+}
