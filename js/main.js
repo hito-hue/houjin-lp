@@ -41,6 +41,52 @@ document.querySelectorAll('.js-scroll').forEach(function (el) {
   if (lpPath) lpPath.value = window.location.pathname;
 })();
 
+/* ---------- IPから都道府県を推定して、初期値として入れておく ----------
+   ※IP判定は特にスマホ回線でズレるため、あくまで「下書き」。
+     お客様が選び直せるよう、自動入力したことを画面に明示する。         */
+const PREFECTURE_BY_ROMAJI = {
+  hokkaido: '北海道', aomori: '青森県', iwate: '岩手県', miyagi: '宮城県',
+  akita: '秋田県', yamagata: '山形県', fukushima: '福島県', ibaraki: '茨城県',
+  tochigi: '栃木県', gunma: '群馬県', saitama: '埼玉県', chiba: '千葉県',
+  tokyo: '東京都', kanagawa: '神奈川県', niigata: '新潟県', toyama: '富山県',
+  ishikawa: '石川県', fukui: '福井県', yamanashi: '山梨県', nagano: '長野県',
+  gifu: '岐阜県', shizuoka: '静岡県', aichi: '愛知県', mie: '三重県',
+  shiga: '滋賀県', kyoto: '京都府', osaka: '大阪府', hyogo: '兵庫県',
+  nara: '奈良県', wakayama: '和歌山県', tottori: '鳥取県', shimane: '島根県',
+  okayama: '岡山県', hiroshima: '広島県', yamaguchi: '山口県', tokushima: '徳島県',
+  kagawa: '香川県', ehime: '愛媛県', kochi: '高知県', fukuoka: '福岡県',
+  saga: '佐賀県', nagasaki: '長崎県', kumamoto: '熊本県', oita: '大分県',
+  miyazaki: '宮崎県', kagoshima: '鹿児島県', okinawa: '沖縄県'
+};
+
+(function autofillPrefecture() {
+  const select = document.getElementById('prefecture');
+  const notice = document.getElementById('prefectureAuto');
+  if (!select) return;
+
+  fetch('https://ipwho.is/')
+    .then(function (res) { return res.json(); })
+    .then(function (geo) {
+      if (!geo || geo.success === false || geo.country_code !== 'JP') return;
+
+      // "Kanagawa Prefecture" / "Tokyo" → かながわ / とうきょう のキーに揃える
+      const key = String(geo.region || '')
+        .toLowerCase()
+        .replace(/\s*prefecture\s*/g, '')
+        .replace(/[^a-z]/g, '');
+
+      const pref = PREFECTURE_BY_ROMAJI[key];
+      // すでにお客様が選んでいる場合は上書きしない
+      if (!pref || select.value) return;
+
+      select.value = pref;
+      if (notice) notice.hidden = false;
+    })
+    .catch(function () {
+      /* 判定できなくても、お客様が手で選べば済むので何もしない */
+    });
+})();
+
 /* ---------- 会社形態が「個人」なら、会社名・屋号の欄を消す ---------- */
 const companyType = document.getElementById('companyType');
 const companyNameRow = document.getElementById('companyNameRow');

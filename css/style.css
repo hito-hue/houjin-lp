@@ -796,6 +796,18 @@ html { scroll-behavior: smooth; }
 }
 .form-hint strong { color: var(--navy); font-weight: 800; }
 
+/* IPから自動入力したことを伝える表示 */
+.form-hint-auto {
+  margin-top: 6px;
+  padding: 6px 10px;
+  background: var(--notice-bg);
+  border-left: 3px solid var(--notice-border);
+  border-radius: 4px;
+  font-size: 11.5px;
+  color: #5b4a1e;
+}
+.form-hint-auto strong { color: var(--red); font-weight: 800; }
+
 /* ==========================================================================
    サンクスページ（電話に出てもらうための再認識ブロック）
    ========================================================================== */
