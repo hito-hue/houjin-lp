@@ -251,6 +251,39 @@ function openConfirm(data) {
   document.body.style.overflow = 'hidden';
 }
 
+/* お客様へ自動で返信するメールの文面 */
+function buildAutoResponse(data) {
+  const name = data.name ? data.name + ' 様' : 'お客様';
+
+  return [
+    name,
+    '',
+    'この度は、法人携帯・通信費の見直しに関する広告をご覧いただき、',
+    'お問い合わせいただきありがとうございます。',
+    '株式会社アイ・ステーションです。',
+    '',
+    '本サービスでは、現在の携帯・通信環境を確認したうえで、',
+    '月々のコスト削減や、法人携帯の管理面の見直しをご提案しています。',
+    '',
+    '後ほど担当者より、ご入力いただいたお電話番号宛にご連絡させていただきます。',
+    'お電話では、現在のご利用状況を簡単にお伺いし、',
+    '削減可能性や見直しのポイントをご案内いたします。',
+    '',
+    'お忙しいところ恐れ入りますが、',
+    '担当者からの着信をお待ちいただけますと幸いです。',
+    '',
+    '（ご連絡は、知らない番号からの着信となる場合がございます。',
+    '　本件に関するご連絡ですので、お受けいただけますようお願いいたします）',
+    '',
+    '━━━━━━━━━━━━━━━━━━━━',
+    '株式会社アイ・ステーション',
+    '法人携帯・通信費見直し窓口',
+    '受付時間：平日 9:00〜19:00',
+    'https://i-sta.co.jp/',
+    '━━━━━━━━━━━━━━━━━━━━'
+  ].join('\n');
+}
+
 /* 実際の送信処理 */
 function sendLead(data) {
   confirmSendBtn.disabled = true;
@@ -261,6 +294,10 @@ function sendLead(data) {
   const mailBody = {
       _subject: '【LP】無料相談：' + (data.company_name || '') + ' 様',
       _template: 'table',
+
+      // お客様への自動返信（この email 宛に、下記の文面が自動で届く）
+      email: data.email || '',
+      _autoresponse: buildAutoResponse(data),
       会社形態: data.company_type || '',
       会社名・屋号: data.company_name || '',
       お名前: data.name || '',
