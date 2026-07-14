@@ -41,6 +41,34 @@ document.querySelectorAll('.js-scroll').forEach(function (el) {
   if (lpPath) lpPath.value = window.location.pathname;
 })();
 
+/* ---------- 会社形態が「個人」なら、会社名・屋号の欄を消す ---------- */
+const companyType = document.getElementById('companyType');
+const companyNameRow = document.getElementById('companyNameRow');
+const companyNameInput = document.getElementById('companyName');
+
+function refreshCompanyName() {
+  if (!companyType || !companyNameRow) return;
+  const isIndividual = companyType.value === '個人';
+
+  companyNameRow.hidden = isIndividual;
+
+  if (isIndividual) {
+    // 隠すだけでなく、必須チェックと送信データからも外す
+    companyNameInput.removeAttribute('required');
+    companyNameInput.value = '';
+    companyNameInput.classList.remove('error');
+    const err = document.getElementById('err-companyName');
+    if (err) { err.textContent = ''; err.classList.remove('show'); }
+  } else {
+    companyNameInput.setAttribute('required', '');
+  }
+}
+
+if (companyType) {
+  companyType.addEventListener('change', refreshCompanyName);
+  refreshCompanyName();
+}
+
 /* ---------- 入力チェック ---------- */
 const submitBtn = document.getElementById('submitBtn');
 
@@ -79,6 +107,8 @@ function validate() {
 
   rules.forEach(function (rule) {
     const field = document.getElementById(rule.id);
+    // 「個人」選択時に隠した欄は、必須チェックの対象外にする
+    if (!field.hasAttribute('required')) return;
     if (!field.value.trim()) {
       showError(rule.id, rule.message);
       if (!firstBad) firstBad = field;

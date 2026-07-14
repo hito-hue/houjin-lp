@@ -12,7 +12,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;800;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="./css/style.css?v=15">
+<link rel="stylesheet" href="./css/style.css?v=16">
 </head>
 <body>
 <div class="page-bg">
@@ -111,7 +111,8 @@
       <p class="form-error" id="err-companyType"></p>
     </div>
 
-    <div class="form-row">
+    <!-- 会社形態で「個人」を選ぶと、この行はJSで非表示になる -->
+    <div class="form-row" id="companyNameRow">
       <label for="companyName">会社名・屋号 <span>必須</span></label>
       <input id="companyName" type="text" name="company_name" placeholder="例）〇〇商事 / 〇〇屋" required>
       <p class="form-error" id="err-companyName"></p>
@@ -205,6 +206,6 @@
 </div><!-- /.lp-wrapper -->
 </div><!-- /.page-bg -->
 
-<script src="./js/main.js?v=15"></script>
+<script src="./js/main.js?v=16"></script>
 </body>
 </html>
