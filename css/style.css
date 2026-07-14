@@ -787,6 +787,65 @@ html { scroll-behavior: smooth; }
   margin: 6px 0 0;
 }
 
+/* 入力欄の下に出す補足（ふりがな指定など） */
+.form-hint {
+  margin: 5px 0 0;
+  font-size: 11px;
+  line-height: 1.6;
+  color: var(--text-gray);
+}
+.form-hint strong { color: var(--navy); font-weight: 800; }
+
+/* ==========================================================================
+   サンクスページ（電話に出てもらうための再認識ブロック）
+   ========================================================================== */
+.thanks-callback {
+  background: var(--notice-bg);
+  border: 2px solid var(--notice-border);
+  border-radius: 12px;
+  padding: 14px 14px 13px;
+  margin: 0 0 18px;
+  text-align: center;
+}
+.thanks-callback-title {
+  font-size: 14px;
+  font-weight: 900;
+  color: var(--navy);
+  margin: 0 0 6px;
+}
+.thanks-callback-text {
+  font-size: 12.5px;
+  line-height: 1.8;
+  color: #444b60;
+  margin: 0;
+}
+.thanks-callback-text strong { color: var(--red); font-weight: 800; }
+
+.thanks-recap {
+  background: #f2f4fc;
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin: 0 0 22px;
+  text-align: left;
+}
+.thanks-recap-title {
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--navy);
+  margin: 0 0 8px;
+  text-align: center;
+}
+.thanks-recap-list {
+  margin: 0;
+  padding-left: 18px;
+}
+.thanks-recap-list li {
+  font-size: 12.5px;
+  line-height: 1.9;
+  color: #444b60;
+}
+.thanks-recap-list strong { color: var(--navy); font-weight: 800; }
+
 /* ボット対策の罠フィールド（画面にも読み上げにも出さない） */
 .hp-field {
   position: absolute;

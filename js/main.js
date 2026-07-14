@@ -1,15 +1,8 @@
 /* ==========================================================================
-   法人携帯LP - main.js
-   ここだけ書き換えれば、電話番号・送信先・営業時間を変更できます
+   法人スマホLP - main.js
+   送信先の変更はこの CONFIG だけ書き換えればOK
    ========================================================================== */
 const CONFIG = {
-  // 表示用の電話番号
-  telDisplay: '050-0000-0000',
-  // 発信用（ハイフンなし）
-  telRaw: '05000000000',
-  // 電話受付時間（24時間表記・平日のみ）
-  hours: { start: 9, end: 19 },
-
   // 【送信先1】メール（FormSubmit経由。登録不要・無料）
   mailEndpoint: 'https://formsubmit.co/ajax/h_ito@beee-marketing.com',
 
@@ -19,81 +12,6 @@ const CONFIG = {
   // 送信完了後に飛ばすページ
   thanksUrl: './thanks.html'
 };
-
-/* ---------- 電話番号を全箇所に反映 ---------- */
-document.querySelectorAll('[data-tel-display]').forEach(function (el) {
-  el.textContent = CONFIG.telDisplay;
-});
-document.querySelectorAll('a[href^="tel:"]').forEach(function (a) {
-  a.setAttribute('href', 'tel:' + CONFIG.telRaw);
-});
-
-/* ---------- 営業時間内かどうか ---------- */
-function isBusinessHours() {
-  const now = new Date();
-  const day = now.getDay();          // 0=日, 6=土
-  const hour = now.getHours();
-  if (day === 0 || day === 6) return false;
-  return hour >= CONFIG.hours.start && hour < CONFIG.hours.end;
-}
-
-/* ---------- モーダル制御 ---------- */
-const telModal = document.getElementById('telModal');
-const afterHoursModal = document.getElementById('afterHoursModal');
-
-function openModal(modal) {
-  if (!modal) return;
-  modal.hidden = false;
-  document.body.style.overflow = 'hidden';
-}
-function closeModal(modal) {
-  if (!modal) return;
-  modal.hidden = true;
-  document.body.style.overflow = '';
-}
-
-// ヘッダーの電話ボタン：営業時間内→電話モーダル、時間外→フォーム誘導モーダル
-const headerTelBtn = document.getElementById('headerTelBtn');
-if (headerTelBtn) {
-  headerTelBtn.addEventListener('click', function () {
-    openModal(isBusinessHours() ? telModal : afterHoursModal);
-  });
-}
-
-// FVの電話ボタン：時間外はタップしても発信させず、フォームへ誘導
-const fvTelCta = document.getElementById('fvTelCta');
-if (fvTelCta) {
-  fvTelCta.addEventListener('click', function (e) {
-    if (!isBusinessHours()) {
-      e.preventDefault();
-      openModal(afterHoursModal);
-    }
-  });
-}
-
-document.querySelectorAll('[data-close-tel]').forEach(function (el) {
-  el.addEventListener('click', function () { closeModal(telModal); });
-});
-document.querySelectorAll('[data-close-afterhours]').forEach(function (el) {
-  el.addEventListener('click', function () { closeModal(afterHoursModal); });
-});
-
-document.addEventListener('keydown', function (e) {
-  if (e.key === 'Escape') {
-    closeModal(telModal);
-    closeModal(afterHoursModal);
-  }
-});
-
-// 時間外モーダル内の「フォームで無料見積もり」→閉じてスクロール
-const afterHoursFormBtn = document.getElementById('afterHoursFormBtn');
-if (afterHoursFormBtn) {
-  afterHoursFormBtn.addEventListener('click', function (e) {
-    e.preventDefault();
-    closeModal(afterHoursModal);
-    scrollToForm();
-  });
-}
 
 /* ---------- スムーススクロール ---------- */
 function scrollToForm() {
@@ -123,63 +41,9 @@ document.querySelectorAll('.js-scroll').forEach(function (el) {
   if (lpPath) lpPath.value = window.location.pathname;
 })();
 
-/* ---------- 会社形態による書類確認の出し分け ---------- */
-const companyType = document.getElementById('companyType');
-const soleNotice = document.getElementById('soleNotice');
-const corpNotice = document.getElementById('corpNotice');
+/* ---------- 入力チェック ---------- */
 const submitBtn = document.getElementById('submitBtn');
 
-function currentNotice() {
-  if (!companyType) return null;
-  if (companyType.value === '個人事業主') return { box: soleNotice, name: 'doc_check_sole', key: 'sole' };
-  if (companyType.value !== '') return { box: corpNotice, name: 'doc_check_corp', key: 'corp' };
-  return null;
-}
-
-// 書類「いいえ」を選んだら送信をブロックする
-function refreshSubmitState() {
-  const notice = currentNotice();
-  if (!notice) {
-    submitBtn.disabled = false;
-    return;
-  }
-  const checked = notice.box.querySelector('input[name="' + notice.name + '"]:checked');
-  const deny = notice.box.querySelector('[data-deny-for="' + notice.key + '"]');
-  const isNo = checked && checked.dataset.allowSubmit === 'false';
-  if (deny) deny.hidden = !isNo;
-  submitBtn.disabled = !!isNo;
-}
-
-if (companyType) {
-  companyType.addEventListener('change', function () {
-    const notice = currentNotice();
-
-    // 会社形態を選び直したら、前の回答と警告をリセットする
-    [soleNotice, corpNotice].forEach(function (box) {
-      box.querySelectorAll('input[type="radio"]').forEach(function (radio) {
-        radio.checked = false;
-      });
-      box.querySelectorAll('[data-deny-for]').forEach(function (deny) {
-        deny.hidden = true;
-      });
-    });
-
-    soleNotice.hidden = !(notice && notice.key === 'sole');
-    corpNotice.hidden = !(notice && notice.key === 'corp');
-    refreshSubmitState();
-
-    // 追加質問が出たことに気づけるよう、その位置まで送る
-    if (notice) {
-      notice.box.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }
-  });
-}
-
-document.querySelectorAll('input[name="doc_check_sole"], input[name="doc_check_corp"]').forEach(function (radio) {
-  radio.addEventListener('change', refreshSubmitState);
-});
-
-/* ---------- 入力チェック ---------- */
 function showError(id, message) {
   const field = document.getElementById(id);
   const errorBox = document.getElementById('err-' + id);
@@ -207,9 +71,9 @@ function validate() {
   const rules = [
     { id: 'companyType', message: '会社形態を選択してください' },
     { id: 'companyName', message: '会社名・屋号をご入力ください' },
-    { id: 'contactName', message: 'ご担当者名をご入力ください' },
+    { id: 'contactName', message: 'お名前をご入力ください' },
     { id: 'tel', message: '電話番号をご入力ください' },
-    { id: 'email', message: 'メールアドレスをご入力ください' }
+    { id: 'prefecture', message: '都道府県を選択してください' }
   ];
 
   rules.forEach(function (rule) {
@@ -226,6 +90,15 @@ function validate() {
     if (!firstBad) firstBad = tel;
   }
 
+  // 名前は、インサイドセールスが読めるよう「ひらがな・カタカナ」で入れてもらう
+  const contactName = document.getElementById('contactName');
+  const kanaOnly = /^[぀-ゟ゠-ヿー\s　ー]+$/;
+  if (contactName.value.trim() && !kanaOnly.test(contactName.value.trim())) {
+    showError('contactName', 'ひらがな または カタカナ でご入力ください（例：やまだ たろう）');
+    if (!firstBad) firstBad = contactName;
+  }
+
+  // メールは任意。入力された場合だけ形式を見る
   const email = document.getElementById('email');
   if (email.value.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value.trim())) {
     showError('email', 'メールアドレスの形式が正しくありません');
@@ -252,7 +125,7 @@ if (leadForm) {
     // ボット対策1：見えない罠の欄が埋まっている＝自動投稿
     const honeypot = leadForm.querySelector('input[name="website"]');
     if (honeypot && honeypot.value !== '') {
-      window.location.href = CONFIG.thanksUrl; // 送信したように見せて、実際は送らない
+      window.location.href = CONFIG.thanksUrl; // 送ったように見せて、実際は送らない
       return;
     }
 
@@ -272,22 +145,19 @@ if (leadForm) {
 
     // メール本文で読みやすいように、日本語の項目名に整える
     const mailBody = {
-      _subject: '【LP】お問い合わせ：' + (data.company_name || '') + ' 様',
+      _subject: '【LP】無料相談：' + (data.company_name || '') + ' 様',
       _template: 'table',
       会社形態: data.company_type || '',
-      書類の準備状況: data.doc_check_corp || data.doc_check_sole || '',
       会社名・屋号: data.company_name || '',
-      ご担当者名: data.name || '',
+      お名前: data.name || '',
       電話番号: data.tel || '',
-      メールアドレス: data.email || '',
       都道府県: data.prefecture || '',
-      連絡希望時間: data.contact_time || '',
-      問い合わせ内容: data.message || '',
+      メールアドレス: data.email || '',
+      ご相談内容: data.message || '',
       流入元: [data.utm_source, data.utm_campaign, data.utm_content].filter(Boolean).join(' / ') || '直接',
       配信面: data.placement || ''
     };
 
-    // 送信先を並行して呼ぶ（片方が落ちても、もう片方で受け取れる）
     const sendMail = fetch(CONFIG.mailEndpoint, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
@@ -315,7 +185,7 @@ if (leadForm) {
         window.location.href = CONFIG.thanksUrl;
       } else {
         submitBtn.disabled = false;
-        submitBtn.textContent = 'この内容で送信する';
+        submitBtn.textContent = '無料相談する';
         alert('送信に失敗しました。お手数ですが、時間をおいて再度お試しください。');
       }
     });
