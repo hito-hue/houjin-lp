@@ -73,6 +73,7 @@ function validate() {
     { id: 'companyName', message: '会社名・屋号をご入力ください' },
     { id: 'contactName', message: 'お名前をご入力ください' },
     { id: 'tel', message: '電話番号をご入力ください' },
+    { id: 'email', message: 'メールアドレスをご入力ください' },
     { id: 'prefecture', message: '都道府県を選択してください' }
   ];
 
@@ -98,7 +99,6 @@ function validate() {
     if (!firstBad) firstBad = contactName;
   }
 
-  // メールは任意。入力された場合だけ形式を見る
   const email = document.getElementById('email');
   if (email.value.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value.trim())) {
     showError('email', 'メールアドレスの形式が正しくありません');
