@@ -91,11 +91,12 @@ function validate() {
     if (!firstBad) firstBad = tel;
   }
 
-  // 名前は、インサイドセールスが読めるよう「ひらがな・カタカナ」で入れてもらう
+  // 名前は、インサイドセールスが読めるようひらがなで入れてもらう
+  // （カタカナで入力された場合も読めるので通す。漢字だけ弾く）
   const contactName = document.getElementById('contactName');
-  const kanaOnly = /^[぀-ゟ゠-ヿー\s　ー]+$/;
+  const kanaOnly = /^[぀-ゟ゠-ヿー\s　]+$/;
   if (contactName.value.trim() && !kanaOnly.test(contactName.value.trim())) {
-    showError('contactName', 'ひらがな または カタカナ でご入力ください（例：やまだ たろう）');
+    showError('contactName', 'ひらがなでご入力ください（例：やまだ たろう）');
     if (!firstBad) firstBad = contactName;
   }
 
