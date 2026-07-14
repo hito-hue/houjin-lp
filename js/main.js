@@ -9,9 +9,13 @@ const CONFIG = {
   telRaw: '05000000000',
   // 電話受付時間（24時間表記・平日のみ）
   hours: { start: 9, end: 19 },
-  // 送信先。空のままだと送信内容をコンソールに出すだけの「デモモード」
-  // 例: 'https://example.com/api/lead' や Googleフォーム/Zapier等のWebhook URL
-  endpoint: '',
+
+  // 【送信先1】メール（FormSubmit経由。登録不要・無料）
+  mailEndpoint: 'https://formsubmit.co/ajax/h_ito@beee-marketing.com',
+
+  // 【送信先2】ChatWork通知（VPSの受付窓口。空ならメールのみ）
+  chatworkEndpoint: '',
+
   // 送信完了後に飛ばすページ
   thanksUrl: './thanks.html'
 };
@@ -263,29 +267,57 @@ if (leadForm) {
     const data = Object.fromEntries(new FormData(leadForm).entries());
     delete data.website; // 罠の欄は送信データに含めない
 
-    if (!CONFIG.endpoint) {
-      // デモモード：送信先が未設定なので中身をコンソールに出すだけ
-      console.log('[デモ送信] 送信先が未設定です。CONFIG.endpoint を設定してください。', data);
-      window.location.href = CONFIG.thanksUrl;
-      return;
-    }
-
     submitBtn.disabled = true;
     submitBtn.textContent = '送信中…';
 
-    fetch(CONFIG.endpoint, {
+    // メール本文で読みやすいように、日本語の項目名に整える
+    const mailBody = {
+      _subject: '【LP】お問い合わせ：' + (data.company_name || '') + ' 様',
+      _template: 'table',
+      会社形態: data.company_type || '',
+      書類の準備状況: data.doc_check_corp || data.doc_check_sole || '',
+      会社名・屋号: data.company_name || '',
+      ご担当者名: data.name || '',
+      電話番号: data.tel || '',
+      メールアドレス: data.email || '',
+      都道府県: data.prefecture || '',
+      連絡希望時間: data.contact_time || '',
+      問い合わせ内容: data.message || '',
+      流入元: [data.utm_source, data.utm_campaign, data.utm_content].filter(Boolean).join(' / ') || '直接',
+      配信面: data.placement || ''
+    };
+
+    // 送信先を並行して呼ぶ（片方が落ちても、もう片方で受け取れる）
+    const sendMail = fetch(CONFIG.mailEndpoint, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data)
-    })
-      .then(function (res) {
-        if (!res.ok) throw new Error('送信に失敗しました');
+      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+      body: JSON.stringify(mailBody)
+    }).then(function (res) {
+      if (!res.ok) throw new Error('mail failed');
+      return 'mail';
+    });
+
+    const sendChatwork = CONFIG.chatworkEndpoint
+      ? fetch(CONFIG.chatworkEndpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        }).then(function (res) {
+          if (!res.ok) throw new Error('chatwork failed');
+          return 'chatwork';
+        })
+      : Promise.reject(new Error('chatwork未設定'));
+
+    // どちらか1つでも成功すれば、お客様には「送信完了」を出す
+    Promise.allSettled([sendMail, sendChatwork]).then(function (results) {
+      const ok = results.some(function (r) { return r.status === 'fulfilled'; });
+      if (ok) {
         window.location.href = CONFIG.thanksUrl;
-      })
-      .catch(function () {
+      } else {
         submitBtn.disabled = false;
         submitBtn.textContent = 'この内容で送信する';
-        alert('送信に失敗しました。時間をおいて再度お試しください。');
-      });
+        alert('送信に失敗しました。お手数ですが、時間をおいて再度お試しください。');
+      }
+    });
   });
 }
