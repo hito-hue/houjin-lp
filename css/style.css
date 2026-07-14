@@ -1180,6 +1180,77 @@ html { scroll-behavior: smooth; }
 }
 .modal-close-x:hover { color: var(--navy); }
 
+.modal-lead {
+  text-align: center;
+  font-size: 12.5px;
+  color: var(--text-gray);
+  margin: 0 0 14px;
+  font-weight: 700;
+}
+
+.modal-actions {
+  display: grid;
+  grid-template-columns: 1fr 1.4fr;
+  gap: 10px;
+}
+
+.modal-btn {
+  border: none;
+  border-radius: 10px;
+  padding: 14px 8px;
+  font-size: 14px;
+  font-weight: 800;
+  transition: filter 0.15s ease, transform 0.1s ease;
+}
+.modal-btn:hover { filter: brightness(1.05); }
+.modal-btn:active { transform: translateY(1px); }
+.modal-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.modal-btn-back {
+  background: #e5e8f2;
+  color: var(--navy);
+}
+
+.modal-btn-send {
+  background: linear-gradient(180deg, var(--red-bright), var(--red));
+  color: #fff;
+  box-shadow: 0 6px 14px rgba(216, 19, 36, 0.3);
+}
+
+/* 送信前の確認画面 */
+.modal-card-confirm { padding: 24px 18px 18px; }
+
+.confirm-list {
+  margin: 0 0 18px;
+  padding: 12px 14px;
+  background: #f4f6fc;
+  border-radius: 10px;
+  max-height: 46vh;
+  overflow-y: auto;
+}
+
+.confirm-list dt {
+  font-size: 10.5px;
+  font-weight: 800;
+  color: var(--text-gray);
+  margin-top: 10px;
+  letter-spacing: 0.02em;
+}
+.confirm-list dt:first-child { margin-top: 0; }
+
+.confirm-list dd {
+  margin: 2px 0 0;
+  padding-bottom: 9px;
+  border-bottom: 1px dashed #dfe3f0;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--navy);
+  line-height: 1.6;
+  word-break: break-all;
+  white-space: pre-wrap;
+}
+.confirm-list dd:last-child { border-bottom: none; padding-bottom: 0; }
+
 /* 電話モーダル */
 .modal-card-tel { text-align: center; padding: 28px 22px 22px; }
 

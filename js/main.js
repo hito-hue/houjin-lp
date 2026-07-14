@@ -115,6 +115,19 @@ if (companyType) {
   refreshCompanyName();
 }
 
+/* ---------- 電話番号：ハイフンや全角数字で打たれても弾かず自動で整える ---------- */
+const telInput = document.getElementById('tel');
+if (telInput) {
+  telInput.addEventListener('input', function () {
+    const cleaned = telInput.value
+      .replace(/[０-９]/g, function (c) {          // 全角数字 → 半角
+        return String.fromCharCode(c.charCodeAt(0) - 0xfee0);
+      })
+      .replace(/[^0-9]/g, '');                     // ハイフン・スペース等を除去
+    if (telInput.value !== cleaned) telInput.value = cleaned;
+  });
+}
+
 /* ---------- 入力チェック ---------- */
 const submitBtn = document.getElementById('submitBtn');
 
@@ -162,8 +175,8 @@ function validate() {
   });
 
   const tel = document.getElementById('tel');
-  if (tel.value.trim() && !/^[0-9-]{10,14}$/.test(tel.value.trim())) {
-    showError('tel', '電話番号は数字とハイフンでご入力ください');
+  if (tel.value.trim() && !/^[0-9]{10,11}$/.test(tel.value.trim())) {
+    showError('tel', 'ハイフンなしの数字10〜11桁でご入力ください（例：09012345678）');
     if (!firstBad) firstBad = tel;
   }
 
@@ -194,34 +207,60 @@ function validate() {
 const leadForm = document.getElementById('leadForm');
 const pageOpenedAt = Date.now();
 
-if (leadForm) {
-  leadForm.addEventListener('submit', function (e) {
-    e.preventDefault();
-    if (submitBtn.disabled) return;
+/* 確認画面の制御 */
+const confirmModal = document.getElementById('confirmModal');
+const confirmList = document.getElementById('confirmList');
+const confirmSendBtn = document.getElementById('confirmSendBtn');
 
-    // ボット対策1：見えない罠の欄が埋まっている＝自動投稿
-    const honeypot = leadForm.querySelector('input[name="website"]');
-    if (honeypot && honeypot.value !== '') {
-      window.location.href = CONFIG.thanksUrl; // 送ったように見せて、実際は送らない
-      return;
-    }
+function closeConfirm() {
+  if (!confirmModal) return;
+  confirmModal.hidden = true;
+  document.body.style.overflow = '';
+}
 
-    // ボット対策2：開いて3秒未満での送信は人間の入力速度ではない
-    if (Date.now() - pageOpenedAt < 3000) {
-      window.location.href = CONFIG.thanksUrl;
-      return;
-    }
+document.querySelectorAll('[data-close-confirm]').forEach(function (el) {
+  el.addEventListener('click', closeConfirm);
+});
+document.addEventListener('keydown', function (e) {
+  if (e.key === 'Escape') closeConfirm();
+});
 
-    if (!validate()) return;
+// 入力内容を確認画面に並べる
+function openConfirm(data) {
+  const rows = [
+    ['会社形態', data.company_type],
+    ['会社名・屋号', data.company_name],
+    ['おなまえ', data.name],
+    ['電話番号', data.tel],
+    ['都道府県', data.prefecture],
+    ['メールアドレス', data.email],
+    ['ご連絡希望時間', data.contact_time || '指定なし'],
+    ['ご相談内容', data.message]
+  ];
 
-    const data = Object.fromEntries(new FormData(leadForm).entries());
-    delete data.website; // 罠の欄は送信データに含めない
+  confirmList.innerHTML = '';
+  rows.forEach(function (row) {
+    if (!row[1]) return; // 未入力の任意項目は出さない
+    const dt = document.createElement('dt');
+    dt.textContent = row[0];
+    const dd = document.createElement('dd');
+    dd.textContent = row[1];
+    confirmList.appendChild(dt);
+    confirmList.appendChild(dd);
+  });
 
-    submitBtn.disabled = true;
-    submitBtn.textContent = '送信中…';
+  confirmModal.hidden = false;
+  document.body.style.overflow = 'hidden';
+}
 
-    // メール本文で読みやすいように、日本語の項目名に整える
-    const mailBody = {
+/* 実際の送信処理 */
+function sendLead(data) {
+  confirmSendBtn.disabled = true;
+  confirmSendBtn.textContent = '送信中…';
+  submitBtn.disabled = true;
+
+  // メール本文で読みやすいように、日本語の項目名に整える
+  const mailBody = {
       _subject: '【LP】無料相談：' + (data.company_name || '') + ' 様',
       _template: 'table',
       会社形態: data.company_type || '',
@@ -262,10 +301,45 @@ if (leadForm) {
       if (ok) {
         window.location.href = CONFIG.thanksUrl;
       } else {
+        closeConfirm();
+        confirmSendBtn.disabled = false;
+        confirmSendBtn.textContent = 'この内容で送信';
         submitBtn.disabled = false;
         submitBtn.textContent = '無料相談する';
         alert('送信に失敗しました。お手数ですが、時間をおいて再度お試しください。');
       }
     });
+}
+
+/* 送信ボタン → まず確認画面を出す */
+if (leadForm) {
+  leadForm.addEventListener('submit', function (e) {
+    e.preventDefault();
+    if (submitBtn.disabled) return;
+
+    // ボット対策1：見えない罠の欄が埋まっている＝自動投稿
+    const honeypot = leadForm.querySelector('input[name="website"]');
+    if (honeypot && honeypot.value !== '') {
+      window.location.href = CONFIG.thanksUrl; // 送ったように見せて、実際は送らない
+      return;
+    }
+
+    // ボット対策2：開いて3秒未満での送信は人間の入力速度ではない
+    if (Date.now() - pageOpenedAt < 3000) {
+      window.location.href = CONFIG.thanksUrl;
+      return;
+    }
+
+    if (!validate()) return;
+
+    const data = Object.fromEntries(new FormData(leadForm).entries());
+    delete data.website; // 罠の欄は送信データに含めない
+
+    openConfirm(data);
+
+    // 「この内容で送信」を押したときに、この内容を送る
+    confirmSendBtn.onclick = function () {
+      sendLead(data);
+    };
   });
 }

@@ -12,7 +12,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;800;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="./css/style.css?v=17">
+<link rel="stylesheet" href="./css/style.css?v=18">
 </head>
 <body>
 <div class="page-bg">
@@ -127,7 +127,8 @@
 
     <div class="form-row">
       <label for="tel">電話番号 <span>必須</span></label>
-      <input id="tel" type="tel" name="tel" placeholder="例）09012345678" required pattern="[0-9\-]+">
+      <input id="tel" type="tel" name="tel" placeholder="例）09012345678" required inputmode="numeric" pattern="[0-9]*">
+      <p class="form-hint">※<strong>ハイフンなし</strong>の数字のみでご入力ください</p>
       <p class="form-error" id="err-tel"></p>
     </div>
 
@@ -209,6 +210,22 @@
 </div><!-- /.lp-wrapper -->
 </div><!-- /.page-bg -->
 
-<script src="./js/main.js?v=17"></script>
+<!-- 送信前の確認画面 -->
+<div class="modal" id="confirmModal" hidden aria-modal="true" role="dialog" aria-labelledby="confirmTitle">
+  <div class="modal-overlay" data-close-confirm></div>
+  <div class="modal-card modal-card-confirm">
+    <h3 id="confirmTitle">この内容でお間違いないですか？</h3>
+    <p class="modal-lead">間違いがあれば「修正する」を押してください</p>
+
+    <dl class="confirm-list" id="confirmList"></dl>
+
+    <div class="modal-actions">
+      <button type="button" class="modal-btn modal-btn-back" data-close-confirm>修正する</button>
+      <button type="button" class="modal-btn modal-btn-send" id="confirmSendBtn">この内容で送信</button>
+    </div>
+  </div>
+</div>
+
+<script src="./js/main.js?v=18"></script>
 </body>
 </html>
