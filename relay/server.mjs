@@ -35,10 +35,14 @@ const CONFIG = {
   logFile: path.join(process.cwd(), 'leads.jsonl')
 };
 
+// pool: 接続を使い回す。1通ごとにGmailへつなぎ直す（毎回0.5秒前後）のを避ける
 const mailer = CONFIG.gmailUser && CONFIG.gmailPass
   ? nodemailer.createTransport({
       service: 'gmail',
-      auth: { user: CONFIG.gmailUser, pass: CONFIG.gmailPass }
+      auth: { user: CONFIG.gmailUser, pass: CONFIG.gmailPass },
+      pool: true,
+      maxConnections: 2,
+      maxMessages: 50
     })
   : null;
 
@@ -230,18 +234,19 @@ const server = http.createServer(async (req, res) => {
       console.error('[lead] 保存に失敗', e.message);
     }
 
-    const results = await Promise.allSettled([sendMails(data), notifyChatwork(data)]);
-    results.forEach((r, i) => {
-      const label = i === 0 ? 'mail' : 'chatwork';
-      if (r.status === 'rejected') console.error(`[${label}] 失敗:`, r.reason?.message);
-      else console.log(`[${label}] ${r.value}`);
-    });
-
-    const mailOk = results[0].status === 'fulfilled';
-
-    // 控えは残っているので、メールが落ちてもお客様には成功を返す
+    // 控えを残した時点で「受け付けた」ことは確定。
+    // メールとChatWorkの完了は待たない＝お客様はすぐサンクスページへ進める。
     res.writeHead(200, { ...cors, 'Content-Type': 'application/json' });
-    res.end(JSON.stringify({ ok: true, mail: mailOk }));
+    res.end(JSON.stringify({ ok: true, queued: true }));
+
+    // 通知は裏で送る（失敗してもログに残るだけ。リードはleads.jsonlにある）
+    Promise.allSettled([sendMails(data), notifyChatwork(data)]).then((results) => {
+      results.forEach((r, i) => {
+        const label = i === 0 ? 'mail' : 'chatwork';
+        if (r.status === 'rejected') console.error(`[${label}] 失敗:`, r.reason?.message);
+        else console.log(`[${label}] ${r.value}`);
+      });
+    });
   });
 });
 
