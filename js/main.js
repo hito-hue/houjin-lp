@@ -11,7 +11,7 @@ const CONFIG = {
   thanksUrl: './thanks.html',
 
   // Microsoft Clarity のプロジェクトID（空なら計測しない）
-  clarityId: ''
+  clarityId: 'xmo6tif6dt'
 };
 
 /* ---------- Microsoft Clarity（行動録画・ヒートマップ） ---------- */
